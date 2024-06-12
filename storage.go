@@ -18,7 +18,7 @@ type PostgresStore struct {
 }
 
 func NewPostgresStore() (*PostgresStore, error) {
-	connStr := "user=postgres dbname=postgres password=gobank sslmode=verify-full"
+	connStr := "user=postgres dbname=postgres password=gobank sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
@@ -32,4 +32,34 @@ func NewPostgresStore() (*PostgresStore, error) {
 	return &PostgresStore{
 		db: db,
 	}, nil
+}
+
+func (s *PostgresStore) Init() error {
+	return s.createAccountTable()
+}
+
+func (s *PostgresStore) createAccountTable() error {
+	query := `CREATE TABLE IF NOT EXISTS account (
+		id serial primary key,
+		first_name varchar(50),
+		last_name varchar(50),
+		number serial,
+		balance serial,
+		create_at timestamp
+	)`
+	_, err := s.db.Exec(query)
+	return err
+}
+
+func (s *PostgresStore) CreateAccount(*Account) error {
+	return nil
+}
+func (s *PostgresStore) UpdateAccount(*Account) error {
+	return nil
+}
+func (s *PostgresStore) DeleteAccount(id int) error {
+	return nil
+}
+func (s *PostgresStore) GetAccount(id int) (*Account, error) {
+	return nil, nil
 }
