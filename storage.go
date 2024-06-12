@@ -6,7 +6,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type storage interface {
+type Storage interface {
 	CreateAccount(*Account) error
 	DeleteAccount(int) error
 	UpdateAccount(*Account) error
@@ -60,6 +60,6 @@ func (s *PostgresStore) UpdateAccount(*Account) error {
 func (s *PostgresStore) DeleteAccount(id int) error {
 	return nil
 }
-func (s *PostgresStore) GetAccount(id int) (*Account, error) {
+func (s *PostgresStore) GetAccountByID(id int) (*Account, error) {
 	return nil, nil
 }
