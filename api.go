@@ -54,6 +54,13 @@ func (s *APIServer) handleLogin(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	acc, err := s.store.GetAccountByNumber(int(req.Number))
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("%+v\n", acc)
+
 	return WriteJSON(w, http.StatusOK, req)
 }
 
@@ -160,7 +167,6 @@ func withJWTAuth(handlerFunc http.HandlerFunc, s Storage) http.HandlerFunc {
 }
 
 func createJWT(account *Account) (string, error) {
-
 	claims := &jwt.MapClaims{
 		"ExpiresAt":     15000,
 		"accountNumber": account.Number,
