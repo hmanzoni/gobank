@@ -3,7 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -20,8 +22,28 @@ type PostgresStore struct {
 	db *sql.DB
 }
 
+func getDbVariables() (*DbEnvVars, error) {
+
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		fmt.Println("Error loading .env file")
+		return nil, err
+	}
+	resp := &DbEnvVars{}
+	resp.DbUser = os.Getenv("DB_USER")
+	resp.DbName = os.Getenv("DB_NAME")
+	resp.DbPassword = os.Getenv("DB_PASS")
+	resp.SslMode = os.Getenv("DB_SSL_MODE")
+
+	return resp, nil
+}
+
 func NewPostgresStore() (*PostgresStore, error) {
-	connStr := "user=postgres dbname=postgres password=gobank sslmode=disable"
+	dbCredentials := &DbEnvVars{}
+	dbCredentials, _ = getDbVariables()
+	connStr := "user=" + dbCredentials.DbUser + " dbname=" + dbCredentials.DbName + " password=" + dbCredentials.DbPassword + " sslmode=" + dbCredentials.SslMode
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {

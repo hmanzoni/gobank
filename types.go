@@ -7,6 +7,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type DbEnvVars struct {
+	DbUser     string
+	DbName     string
+	DbPassword string
+	SslMode    string
+}
+
 type LoginResponse struct {
 	Number int64  `json:"number"`
 	Token  string `json:"token"`

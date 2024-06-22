@@ -10,6 +10,7 @@ import (
 
 	jwt "github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 type APIServer struct {
@@ -178,19 +179,31 @@ func withJWTAuth(handlerFunc http.HandlerFunc, s Storage) http.HandlerFunc {
 	}
 }
 
+func goDotEnvVariable(key string) string {
+
+	// load .env file
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	return os.Getenv(key)
+}
+
 func createJWT(account *Account) (string, error) {
 	claims := &jwt.MapClaims{
 		"ExpiresAt":     15000,
 		"accountNumber": account.Number,
 	}
 
-	secret := os.Getenv("JWT_SECRET")
+	secret := goDotEnvVariable("JWT_SECRET")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
 }
 
 func validateJWT(tokenString string) (*jwt.Token, error) {
-	secret := os.Getenv("JWT_SECRET")
+	secret := goDotEnvVariable("JWT_SECRET")
 	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
