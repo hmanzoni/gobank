@@ -16,7 +16,7 @@ services:
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
     environment:
-      POSTGRES_PASSWORD: gobank
+      POSTGRES_PASSWORD: ${DB_PASS}
 
   # adminer:
   #   image: adminer
